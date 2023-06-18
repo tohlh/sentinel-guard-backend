@@ -4,7 +4,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { UserAuthService } from '../user.auth.service';
 
 @Injectable()
-export class LocalStrategy extends PassportStrategy(Strategy) {
+export class LocalStrategy extends PassportStrategy(Strategy, 'user-local') {
   constructor(private userAuthService: UserAuthService) {
     super({
       usernameField: 'email',

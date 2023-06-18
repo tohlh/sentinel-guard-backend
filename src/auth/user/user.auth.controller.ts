@@ -17,13 +17,9 @@ export class UserAuthController {
 
   @UseGuards(LocalAuthGuard)
   @Post('login')
-  async login(@Body() credentials: { email: string; password: string }) {
-    const token = await this.userAuthService.login(
-      credentials.email,
-      credentials.password,
-    );
+  async login(@Body() user) {
     return {
-      access_token: token,
+      access_token: await this.userAuthService.generateToken(user),
     };
   }
 
