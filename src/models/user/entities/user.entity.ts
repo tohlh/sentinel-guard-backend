@@ -15,12 +15,12 @@ export class UserEntity {
     default: () => 'CURRENT_TIMESTAMP(6)',
     type: 'timestamp',
   })
-  created_at?: Date;
+  createdAt?: Date;
 
   @Column({
     default: () => 'CURRENT_TIMESTAMP(6)',
     onUpdate: 'CURRENT_TIMESTAMP(6)',
     type: 'timestamp',
   })
-  updated_at?: Date;
+  updatedAt?: Date;
 }
