@@ -42,6 +42,7 @@ export class UserAuthService {
   }
 
   async register(
+    name: string,
     email: string,
     password: string,
     passwordConfirmation: string,
@@ -51,6 +52,7 @@ export class UserAuthService {
     }
     try {
       const user = await this.userService.create({
+        name: name,
         email: email,
         passwordDigest: await bcrypt.hash(password, 10),
       });

@@ -27,6 +27,7 @@ export class UserAuthController {
   async register(
     @Body()
     credentials: {
+      name: string;
       email: string;
       password: string;
       passwordConfirmation: string;
@@ -34,6 +35,7 @@ export class UserAuthController {
   ) {
     try {
       const token = await this.userAuthService.register(
+        credentials.name,
         credentials.email,
         credentials.password,
         credentials.passwordConfirmation,

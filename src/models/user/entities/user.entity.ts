@@ -5,6 +5,9 @@ export class UserEntity {
   @PrimaryGeneratedColumn('increment')
   id: number;
 
+  @Column({ nullable: false })
+  name: string;
+
   @Column({ nullable: false, unique: true })
   email: string;
 
