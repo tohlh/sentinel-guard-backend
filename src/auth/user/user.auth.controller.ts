@@ -49,6 +49,12 @@ export class UserAuthController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Get('verify')
+  verifyToken() {
+    return { message: 'ok' };
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Get('profile')
   getProfile(@Request() req) {
     const { id, passwordDigest, ...res } = req.user;
