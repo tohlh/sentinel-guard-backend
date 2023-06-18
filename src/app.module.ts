@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { databaseConfig } from './config/database.config';
 import { UserAuthModule } from './auth/user/user.auth.module';
 import { UserModule } from './models/user/user.module';
+import { BankAuthModule } from './auth/bank/bank.auth.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { UserModule } from './models/user/user.module';
       useFactory: databaseConfig,
     }),
     UserAuthModule,
+    BankAuthModule,
     UserModule,
   ],
   controllers: [],
