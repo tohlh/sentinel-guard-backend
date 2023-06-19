@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, Generated } from 'typeorm';
 
 @Entity('Bank')
 export class BankEntity {
@@ -16,6 +16,10 @@ export class BankEntity {
 
   @Column({ unique: true })
   apiKey: string;
+
+  @Generated('uuid')
+  @Column({ unique: true })
+  communicationKey: string;
 
   @Column({
     default: () => 'CURRENT_TIMESTAMP(6)',

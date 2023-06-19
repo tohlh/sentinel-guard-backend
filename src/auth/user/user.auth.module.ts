@@ -8,10 +8,12 @@ import { UserService } from 'src/models/user/user.service';
 import { JwtModule } from '@nestjs/jwt';
 import { jwtConstants } from './constants';
 import { JwtStrategy } from './strategy/jwt.strategy';
+import { BankModule } from 'src/models/bank/bank.module';
 
 @Module({
   imports: [
     UserModule,
+    BankModule,
     PassportModule,
     JwtModule.register({
       secret: jwtConstants.secret,

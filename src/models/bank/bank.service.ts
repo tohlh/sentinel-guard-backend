@@ -26,6 +26,12 @@ export class BankService {
     return this.findOne({ where: { apiKey } });
   }
 
+  async findOneByCommunicationKey(
+    communicationKey: string,
+  ): Promise<BankEntity | undefined> {
+    return this.findOne({ where: { communicationKey } });
+  }
+
   async create(data) {
     return await this.bankRepository.save(data).then((res) => {
       res.passwordDigest = undefined;

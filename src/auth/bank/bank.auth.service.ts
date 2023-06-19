@@ -45,7 +45,6 @@ export class BankAuthService {
       });
       return bank.apiKey;
     } catch (err) {
-      console.log(err);
       throw new Error('Username has been registered');
     }
   }

@@ -1,4 +1,6 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { CommunicationEntity } from '../../communication/entities/communication.entity';
+import { UserCommunicationKeyEntity } from './communicationKey.entity';
 
 @Entity('User')
 export class UserEntity {
@@ -26,4 +28,10 @@ export class UserEntity {
     type: 'timestamp',
   })
   updatedAt?: Date;
+
+  @OneToMany(
+    () => UserCommunicationKeyEntity,
+    (communicationKey) => communicationKey.user,
+  )
+  communicationKeys: UserCommunicationKeyEntity[];
 }
