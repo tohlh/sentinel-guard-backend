@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   Controller,
+  Delete,
   Get,
   Post,
   Request,
@@ -39,7 +40,7 @@ export class UserController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Post('remove_bank')
+  @Delete('remove_bank')
   async removeBank(@Request() req) {
     const user = req.user;
     const { bankKey } = req.body;

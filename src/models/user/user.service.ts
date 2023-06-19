@@ -97,12 +97,18 @@ export class UserService {
     const userBank = await this.communicationRepository.findOne({
       where: { bankKey },
     });
+
     if (!bank || !userBank) {
       throw new Error('Bank not found');
     }
-    return await this.communicationRepository.delete({
+
+    await this.communicationRepository.delete({
       userKey: userBank.userKey,
       bankKey: bankKey,
+    });
+
+    await this.userCommunicationKeysRepository.delete({
+      key: userBank.userKey,
     });
   }
 
