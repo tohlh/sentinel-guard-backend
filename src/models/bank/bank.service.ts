@@ -2,12 +2,18 @@ import { Injectable } from '@nestjs/common';
 import { BankEntity } from './entities/bank.entity';
 import { Repository, UpdateResult } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
+import { CommunicationEntity } from '../communication/entities/communication.entity';
+import { UserCommunicationKeyEntity } from '../user/entities/communicationKey.entity';
 
 @Injectable()
 export class BankService {
   constructor(
     @InjectRepository(BankEntity)
     private bankRepository: Repository<BankEntity>,
+    @InjectRepository(CommunicationEntity)
+    private communicationRepository: Repository<CommunicationEntity>,
+    @InjectRepository(UserCommunicationKeyEntity)
+    private userCommunicationKeysRepository: Repository<UserCommunicationKeyEntity>,
   ) {}
 
   findAll(): Promise<BankEntity[]> {
@@ -30,6 +36,47 @@ export class BankService {
     communicationKey: string,
   ): Promise<BankEntity | undefined> {
     return this.findOne({ where: { communicationKey } });
+  }
+
+  async findUsers(bankCommunicationKey) {
+    const userBank = await this.communicationRepository.find({
+      where: { bankKey: bankCommunicationKey },
+    });
+
+    const users = await Promise.all(
+      userBank.map((user) => {
+        console.log(user);
+        return this.userCommunicationKeysRepository
+          .findOne({ where: { key: user.userKey }, relations: ['user'] })
+          .then((res) => {
+            const { name } = res.user;
+            return { name, key: res.key };
+          });
+      }),
+    );
+
+    return users;
+  }
+
+  async findUserByCommunicationKey(
+    bankCommunicationKey: string,
+    userCommunicationKey: string,
+  ) {
+    const userBank = await this.communicationRepository.findOne({
+      where: { bankKey: bankCommunicationKey, userKey: userCommunicationKey },
+    });
+
+    console.log(userBank);
+
+    if (userBank) {
+      return this.userCommunicationKeysRepository
+        .findOne({ where: { key: userBank.userKey }, relations: ['user'] })
+        .then((res) => {
+          const { name } = res.user;
+          return { name, key: res.key };
+        });
+    }
+    return undefined;
   }
 
   async create(data) {

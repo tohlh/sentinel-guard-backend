@@ -79,12 +79,15 @@ export class UserService {
 
   async addBank(user: UserEntity, bankKey: string) {
     const bank = await this.bankService.findOneByCommunicationKey(bankKey);
-    const userBank = await this.communicationRepository.findOne({
-      where: { bankKey },
-    });
-    if (!bank || userBank) {
+    if (!bank) {
       throw new Error('Bank not found');
     }
+
+    const userBanks = await this.getBanks(user);
+    if (userBanks.some((bank) => bank.communicationKey === bankKey)) {
+      throw new Error('Bank already added');
+    }
+
     const userKey = await this.addCommunicationKey(user);
     return await this.communicationRepository.save({
       userKey: userKey,
