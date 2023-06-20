@@ -3,6 +3,8 @@ import {
   Controller,
   Delete,
   Get,
+  Param,
+  Patch,
   Post,
   Request,
   UseGuards,
@@ -23,6 +25,21 @@ export class UserController {
       return { banks };
     } catch (e) {
       throw new BadRequestException('Error getting banks');
+    }
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('get_bank/:bankCommunicationKey')
+  async getBank(
+    @Request() req,
+    @Param('bankCommunicationKey') bankCommunicationKey: string,
+  ) {
+    const user = req.user;
+    try {
+      const bank = await this.userService.getBank(user, bankCommunicationKey);
+      return { bank };
+    } catch (e) {
+      throw new BadRequestException('Error getting bank');
     }
   }
 
@@ -49,6 +66,19 @@ export class UserController {
       return { message: 'Bank removed' };
     } catch (e) {
       throw new BadRequestException('Error removing bank');
+    }
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Patch('update_public_key')
+  async updatePublicKey(@Request() req) {
+    const user = req.user;
+    const { publicKey } = req.body;
+    try {
+      await this.userService.updatePublicKey(user, publicKey);
+      return { message: 'Public key updated' };
+    } catch (e) {
+      throw new BadRequestException('Error updating public key');
     }
   }
 }

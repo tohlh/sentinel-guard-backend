@@ -77,6 +77,23 @@ export class UserService {
     return banks;
   }
 
+  async getBank(user: UserEntity, bankCommunicationKey) {
+    const userBanks = await this.getBanks(user);
+
+    const userBank = userBanks.find(
+      (bank) => bank.communicationKey === bankCommunicationKey,
+    );
+
+    if (!userBank) {
+      throw new Error('Bank not found');
+    }
+
+    const { name, communicationKey, publicKey } =
+      await this.bankService.findOneByCommunicationKey(bankCommunicationKey);
+
+    return { name, communicationKey, publicKey };
+  }
+
   async addBank(user: UserEntity, bankKey: string) {
     const bank = await this.bankService.findOneByCommunicationKey(bankKey);
     if (!bank) {
@@ -120,5 +137,9 @@ export class UserService {
       user,
     });
     return key;
+  }
+
+  async updatePublicKey(user: UserEntity, publicKey: string) {
+    return await this.userRepository.update(user.id, { publicKey });
   }
 }

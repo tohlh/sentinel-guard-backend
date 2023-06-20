@@ -45,7 +45,6 @@ export class BankService {
 
     const users = await Promise.all(
       userBank.map((user) => {
-        console.log(user);
         return this.userCommunicationKeysRepository
           .findOne({ where: { key: user.userKey }, relations: ['user'] })
           .then((res) => {
@@ -66,8 +65,6 @@ export class BankService {
       where: { bankKey: bankCommunicationKey, userKey: userCommunicationKey },
     });
 
-    console.log(userBank);
-
     if (userBank) {
       return this.userCommunicationKeysRepository
         .findOne({ where: { key: userBank.userKey }, relations: ['user'] })
@@ -77,6 +74,10 @@ export class BankService {
         });
     }
     return undefined;
+  }
+
+  async updatePublicKey(bank: BankEntity, publicKey: string) {
+    return await this.bankRepository.update(bank.id, { publicKey });
   }
 
   async create(data) {

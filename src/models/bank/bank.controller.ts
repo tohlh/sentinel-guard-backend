@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   Param,
+  Patch,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -41,6 +42,20 @@ export class BankController {
       return { user };
     } catch {
       throw new BadRequestException('Error getting user');
+    }
+  }
+
+  @UseGuards(ApiKeyAuthGuard)
+  @Patch('update_public_key')
+  async updatePublicKey(@Req() request: any) {
+    const user = request.user;
+    const { publicKey } = request.body;
+
+    try {
+      await this.bankService.updatePublicKey(user, publicKey);
+      return { message: 'Public key updated' };
+    } catch {
+      throw new BadRequestException('Error updating public key');
     }
   }
 }

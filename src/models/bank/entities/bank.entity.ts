@@ -21,6 +21,9 @@ export class BankEntity {
   @Column({ unique: true })
   communicationKey: string;
 
+  @Column({ nullable: true })
+  publicKey: string;
+
   @Column({
     default: () => 'CURRENT_TIMESTAMP(6)',
     type: 'timestamp',

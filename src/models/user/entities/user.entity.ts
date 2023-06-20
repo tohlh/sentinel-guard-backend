@@ -34,4 +34,7 @@ export class UserEntity {
     (communicationKey) => communicationKey.user,
   )
   communicationKeys: UserCommunicationKeyEntity[];
+
+  @Column({ nullable: true })
+  publicKey: string;
 }
