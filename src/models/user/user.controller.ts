@@ -12,7 +12,6 @@ import {
 } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/user/guard/jwt.guard';
 import { UserService } from './user.service';
-import { NotFoundError } from 'rxjs';
 
 @Controller('user')
 export class UserController {
