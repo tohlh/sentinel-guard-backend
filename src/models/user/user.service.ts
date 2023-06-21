@@ -136,13 +136,18 @@ export class UserService {
       throw new Error('Bank not found');
     }
 
+    await this.userCommunicationKeysRepository.delete({
+      key: userBank.userKey,
+    });
+
     await this.communicationRepository.delete({
       userKey: userBank.userKey,
       bankKey: bankKey,
     });
 
-    await this.userCommunicationKeysRepository.delete({
-      key: userBank.userKey,
+    await this.messageRepository.delete({
+      userKey: userBank.userKey,
+      bankKey: bankKey,
     });
   }
 
