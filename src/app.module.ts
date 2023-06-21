@@ -5,6 +5,7 @@ import { databaseConfig } from './config/database.config';
 import { UserAuthModule } from './auth/user/user.auth.module';
 import { UserModule } from './models/user/user.module';
 import { BankAuthModule } from './auth/bank/bank.auth.module';
+import { CommunicationModule } from './models/communication/communication.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { BankAuthModule } from './auth/bank/bank.auth.module';
     UserAuthModule,
     BankAuthModule,
     UserModule,
+    CommunicationModule,
   ],
   controllers: [],
   providers: [],

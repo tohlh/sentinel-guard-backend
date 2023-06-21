@@ -9,18 +9,27 @@ import { JwtModule } from '@nestjs/jwt';
 import { jwtConstants } from './constants';
 import { JwtStrategy } from './strategy/jwt.strategy';
 import { BankModule } from 'src/models/bank/bank.module';
+import { CommunicationModule } from 'src/models/communication/communication.module';
+import { BankService } from 'src/models/bank/bank.service';
 
 @Module({
   imports: [
     UserModule,
     BankModule,
     PassportModule,
+    CommunicationModule,
     JwtModule.register({
       secret: jwtConstants.secret,
       signOptions: jwtConstants.signOptions,
     }),
   ],
-  providers: [UserAuthService, UserService, LocalStrategy, JwtStrategy],
+  providers: [
+    UserAuthService,
+    UserService,
+    BankService,
+    LocalStrategy,
+    JwtStrategy,
+  ],
   controllers: [UserAuthController],
   exports: [UserAuthService],
 })

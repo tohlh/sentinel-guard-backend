@@ -4,6 +4,7 @@ import {
   Get,
   Param,
   Patch,
+  Post,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -56,6 +57,40 @@ export class BankController {
       return { message: 'Public key updated' };
     } catch {
       throw new BadRequestException('Error updating public key');
+    }
+  }
+
+  @UseGuards(ApiKeyAuthGuard)
+  @Post('send_message/:userCommunicationKey')
+  async sendMessage(
+    @Req() request: any,
+    @Param('userCommunicationKey') userCommunicationKey: string,
+  ) {
+    const bank = request.user;
+    const { message } = request.body;
+    try {
+      await this.bankService.sendMessage(bank, userCommunicationKey, message);
+      return { message: 'Message sent' };
+    } catch {
+      throw new BadRequestException('Error sending message');
+    }
+  }
+
+  @UseGuards(ApiKeyAuthGuard)
+  @Get('get_messages/:userCommunicationKey')
+  async getMessages(
+    @Req() request: any,
+    @Param('userCommunicationKey') userCommunicationKey: string,
+  ) {
+    const bank = request.user;
+    try {
+      const messages = await this.bankService.getMessages(
+        bank,
+        userCommunicationKey,
+      );
+      return { messages };
+    } catch {
+      throw new BadRequestException('Error getting messages');
     }
   }
 }

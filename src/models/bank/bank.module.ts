@@ -5,6 +5,7 @@ import { BankService } from './bank.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CommunicationEntity } from '../communication/entities/communication.entity';
 import { UserCommunicationKeyEntity } from '../user/entities/communicationKey.entity';
+import { MessageEntity } from '../communication/entities/message.entity';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { UserCommunicationKeyEntity } from '../user/entities/communicationKey.en
       BankEntity,
       CommunicationEntity,
       UserCommunicationKeyEntity,
+      MessageEntity,
     ]),
   ],
   providers: [BankService],

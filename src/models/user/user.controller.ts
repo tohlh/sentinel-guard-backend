@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  NotFoundException,
   Param,
   Patch,
   Post,
@@ -11,6 +12,7 @@ import {
 } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/user/guard/jwt.guard';
 import { UserService } from './user.service';
+import { NotFoundError } from 'rxjs';
 
 @Controller('user')
 export class UserController {
@@ -79,6 +81,24 @@ export class UserController {
       return { message: 'Public key updated' };
     } catch (e) {
       throw new BadRequestException('Error updating public key');
+    }
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('get_messages/:bankCommunicationKey')
+  async getMessages(
+    @Request() req,
+    @Param('bankCommunicationKey') bankCommunicationKey: string,
+  ) {
+    const user = req.user;
+    try {
+      const messages = await this.userService.getMessages(
+        bankCommunicationKey,
+        user,
+      );
+      return { messages };
+    } catch (e) {
+      throw new NotFoundException('The bank is not found');
     }
   }
 }

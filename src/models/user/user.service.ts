@@ -2,9 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, UpdateResult } from 'typeorm';
 import { UserEntity } from './entities/user.entity';
-import { UserCommunicationKeyEntity } from './entities/communicationKey.entity';
 import { BankService } from '../bank/bank.service';
+import { UserCommunicationKeyEntity } from './entities/communicationKey.entity';
 import { CommunicationEntity } from '../communication/entities/communication.entity';
+import { MessageEntity } from '../communication/entities/message.entity';
 
 @Injectable()
 export class UserService {
@@ -15,6 +16,8 @@ export class UserService {
     private userCommunicationKeysRepository: Repository<UserCommunicationKeyEntity>,
     @InjectRepository(CommunicationEntity)
     private communicationRepository: Repository<CommunicationEntity>,
+    @InjectRepository(MessageEntity)
+    private messageRepository: Repository<MessageEntity>,
     private bankService: BankService,
   ) {}
 
@@ -62,15 +65,21 @@ export class UserService {
         const { bankKey } = await this.communicationRepository.findOne({
           where: { userKey: key.key },
         });
-        return bankKey;
+        return { bankCommunicationKey: bankKey, userCommunicationKey: key.key };
       }),
     );
 
     const banks = await Promise.all(
-      bankKeys.map(async (key) => {
+      bankKeys.map(async (x) => {
         const { name, communicationKey } =
-          await this.bankService.findOneByCommunicationKey(key);
-        return { name, communicationKey };
+          await this.bankService.findOneByCommunicationKey(
+            x.bankCommunicationKey,
+          );
+        return {
+          name,
+          bankCommunicationKey: communicationKey,
+          userCommunicationKey: x.userCommunicationKey,
+        };
       }),
     );
 
@@ -81,7 +90,7 @@ export class UserService {
     const userBanks = await this.getBanks(user);
 
     const userBank = userBanks.find(
-      (bank) => bank.communicationKey === bankCommunicationKey,
+      (bank) => bank.bankCommunicationKey === bankCommunicationKey,
     );
 
     if (!userBank) {
@@ -91,7 +100,12 @@ export class UserService {
     const { name, communicationKey, publicKey } =
       await this.bankService.findOneByCommunicationKey(bankCommunicationKey);
 
-    return { name, communicationKey, publicKey };
+    return {
+      name,
+      bankCommunicationKey: communicationKey,
+      userCommunicationKey: userBank.userCommunicationKey,
+      publicKey,
+    };
   }
 
   async addBank(user: UserEntity, bankKey: string) {
@@ -101,7 +115,7 @@ export class UserService {
     }
 
     const userBanks = await this.getBanks(user);
-    if (userBanks.some((bank) => bank.communicationKey === bankKey)) {
+    if (userBanks.some((bank) => bank.bankCommunicationKey === bankKey)) {
       throw new Error('Bank already added');
     }
 
@@ -141,5 +155,32 @@ export class UserService {
 
   async updatePublicKey(user: UserEntity, publicKey: string) {
     return await this.userRepository.update(user.id, { publicKey });
+  }
+
+  async getMessages(bankCommunicationKey: string, user: UserEntity) {
+    const userBanks = await this.getBanks(user);
+
+    const userBank = userBanks.find(
+      (bank) => bank.bankCommunicationKey === bankCommunicationKey,
+    );
+
+    if (!userBank) {
+      throw new Error('Bank not found');
+    }
+
+    const messages = await this.messageRepository.find({
+      where: {
+        bankKey: userBank.bankCommunicationKey,
+        userKey: userBank.userCommunicationKey,
+      },
+    });
+
+    return messages.map((message) => {
+      return {
+        id: message.id,
+        message: message.content,
+        createdAt: message.createdAt,
+      };
+    });
   }
 }

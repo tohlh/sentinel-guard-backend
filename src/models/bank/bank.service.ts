@@ -4,6 +4,7 @@ import { Repository, UpdateResult } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CommunicationEntity } from '../communication/entities/communication.entity';
 import { UserCommunicationKeyEntity } from '../user/entities/communicationKey.entity';
+import { MessageEntity } from '../communication/entities/message.entity';
 
 @Injectable()
 export class BankService {
@@ -14,6 +15,8 @@ export class BankService {
     private communicationRepository: Repository<CommunicationEntity>,
     @InjectRepository(UserCommunicationKeyEntity)
     private userCommunicationKeysRepository: Repository<UserCommunicationKeyEntity>,
+    @InjectRepository(MessageEntity)
+    private messageRepository: Repository<MessageEntity>,
   ) {}
 
   findAll(): Promise<BankEntity[]> {
@@ -99,5 +102,49 @@ export class BankService {
 
   async remove(id: number) {
     return await this.bankRepository.delete(id);
+  }
+
+  async sendMessage(
+    bank: BankEntity,
+    userCommunicationKey: string,
+    content: string,
+  ) {
+    const userBank = await this.communicationRepository.findOne({
+      where: { bankKey: bank.communicationKey, userKey: userCommunicationKey },
+    });
+
+    if (!userBank) {
+      throw new Error('User not found');
+    }
+
+    const message = await this.messageRepository.save({
+      bankKey: bank.communicationKey,
+      userKey: userCommunicationKey,
+      content,
+    });
+
+    return message;
+  }
+
+  async getMessages(bank: BankEntity, userCommunicationKey: string) {
+    const userBank = await this.communicationRepository.findOne({
+      where: { bankKey: bank.communicationKey, userKey: userCommunicationKey },
+    });
+
+    if (!userBank) {
+      throw new Error('User not found');
+    }
+
+    const messages = await this.messageRepository.find({
+      where: { bankKey: bank.communicationKey, userKey: userCommunicationKey },
+    });
+
+    return messages.map((message) => {
+      return {
+        id: message.id,
+        content: message.content,
+        createdAt: message.createdAt,
+      };
+    });
   }
 }
