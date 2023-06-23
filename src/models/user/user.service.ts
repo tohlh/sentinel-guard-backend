@@ -184,6 +184,8 @@ export class UserService {
       return {
         id: message.id,
         message: message.content,
+        nonce: message.nonce,
+        mac: message.mac,
         createdAt: message.createdAt,
       };
     });

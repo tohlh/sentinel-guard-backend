@@ -107,7 +107,11 @@ export class BankService {
   async sendMessage(
     bank: BankEntity,
     userCommunicationKey: string,
-    content: string,
+    newMessage: {
+      content: string;
+      nonce: string;
+      mac: string;
+    },
   ) {
     const userBank = await this.communicationRepository.findOne({
       where: { bankKey: bank.communicationKey, userKey: userCommunicationKey },
@@ -120,7 +124,9 @@ export class BankService {
     const message = await this.messageRepository.save({
       bankKey: bank.communicationKey,
       userKey: userCommunicationKey,
-      content,
+      content: newMessage.content,
+      nonce: newMessage.nonce,
+      mac: newMessage.mac,
     });
 
     return message;

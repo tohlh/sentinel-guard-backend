@@ -14,6 +14,12 @@ export class MessageEntity {
   @Column({ nullable: false })
   content: string;
 
+  @Column({ nullable: false })
+  nonce: string;
+
+  @Column({ nullable: false })
+  mac: string;
+
   @Column({
     default: () => 'CURRENT_TIMESTAMP(6)',
     type: 'timestamp',
