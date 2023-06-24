@@ -21,7 +21,7 @@ export class BankEntity {
   @Column({ unique: true })
   communicationKey: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: false, default: '' })
   publicKey: string;
 
   @Column({
