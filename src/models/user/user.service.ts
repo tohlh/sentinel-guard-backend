@@ -71,7 +71,7 @@ export class UserService {
 
     const banks = await Promise.all(
       bankKeys.map(async (x) => {
-        const { name, communicationKey } =
+        const { name, communicationKey, publicKey } =
           await this.bankService.findOneByCommunicationKey(
             x.bankCommunicationKey,
           );
@@ -79,6 +79,7 @@ export class UserService {
           name,
           bankCommunicationKey: communicationKey,
           userCommunicationKey: x.userCommunicationKey,
+          publicKey: publicKey,
         };
       }),
     );
