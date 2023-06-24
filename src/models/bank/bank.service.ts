@@ -72,8 +72,8 @@ export class BankService {
       return this.userCommunicationKeysRepository
         .findOne({ where: { key: userBank.userKey }, relations: ['user'] })
         .then((res) => {
-          const { name } = res.user;
-          return { name, key: res.key };
+          const { name, publicKey } = res.user;
+          return { name, publicKey, key: res.key };
         });
     }
     return undefined;
