@@ -24,8 +24,8 @@ export class UserAuthService {
   }
 
   // For JWT strategy
-  async validateUserById(id: string): Promise<any> {
-    const user = this.userService.findOne({ where: { id } });
+  async validateUserByEmail(email: string): Promise<any> {
+    const user = this.userService.findOne({ where: { email } });
     if (!user) {
       return null;
     }
